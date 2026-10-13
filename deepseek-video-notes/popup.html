@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font: 13px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; margin: 0; padding: 14px; width: 260px; }
+      .head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+      .head img { width: 22px; height: 22px; }
+      .head b { font-size: 13.5px; }
+      button { display: block; width: 100%; padding: 9px 12px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+      .primary { border: 0; background: #3550e6; color: #fff; }
+      .primary:disabled { background: #b9c1e8; cursor: default; }
+      .ghost { border: 1px solid #e6e8f0; background: #fff; color: #333; }
+      #status { color: #6b7280; font-size: 12px; margin-top: 4px; min-height: 32px; }
+    </style>
+  </head>
+  <body>
+    <div class="head"><img src="assets/icons/icon32.png" alt="" /><b>DeepSeek Video Notes</b></div>
+    <button id="start" class="primary">▶ 开始记录当前视频</button>
+    <button id="stop" class="ghost" disabled>■ 停止并生成</button>
+    <button id="panel" class="ghost">打开侧边栏（设置 / 日志）</button>
+    <div id="status">点“开始记录”前，确保当前标签页是视频页。</div>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>选择 Obsidian 仓库</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font: 14px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; margin: 0; padding: 20px; }
+      h1 { font-size: 15px; margin: 0 0 8px; }
+      p { color: #6b7280; margin: 0 0 16px; }
+      button { padding: 9px 16px; border: 0; border-radius: 8px; background: #3550e6; color: #fff; font-weight: 600; cursor: pointer; }
+      button:hover { background: #2b43c9; }
+      #status { margin-top: 14px; color: #47506b; min-height: 20px; }
+    </style>
+  </head>
+  <body>
+    <h1>选择 Obsidian 仓库</h1>
+    <p>浏览器不允许在内嵌面板里弹出文件选择器，所以在这个独立窗口里选一次；句柄会存到扩展，内嵌面板直接复用。</p>
+    <button id="pick">选择仓库</button>
+    <div id="status"></div>
+    <script type="module" src="picker.js"></script>
+  </body>
+</html>
