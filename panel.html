@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DeepSeek Video Notes</title>
+    <style>
+      :root {
+        --blue: #3550e6;
+        --blue-ink: #26307a;
+        --line: #e6e8f0;
+        --muted: #6b7280;
+        --bg: #ffffff;
+        --soft: #f5f6fb;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; margin: 0; }
+      body {
+        font: 13px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif;
+        color: #1f2233; background: var(--bg);
+        display: flex; flex-direction: column; overflow: hidden;
+      }
+      header {
+        display: flex; align-items: center; gap: 8px;
+        padding: 12px 12px 12px 14px; border-bottom: 1px solid var(--line);
+        flex: 0 0 auto;
+      }
+      header img { width: 22px; height: 22px; }
+      header .title { font-weight: 650; font-size: 13.5px; flex: 1; }
+      .iconbtn {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; border: 0; border-radius: 8px;
+        background: transparent; color: var(--muted); cursor: pointer;
+      }
+      .iconbtn:hover { background: var(--soft); color: #1f2233; }
+      main { flex: 1 1 auto; overflow: auto; padding: 14px; }
+      .row { display: flex; align-items: center; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+      .row > label { flex: 0 0 84px; color: var(--muted); }
+      input[type="text"], input[type="password"] {
+        flex: 1; min-width: 160px; padding: 7px 10px;
+        border: 1px solid var(--line); border-radius: 8px; background: #fff;
+      }
+      input:focus { outline: 2px solid #cdd6ff; border-color: #b7c3ff; }
+      button.primary, button.ghost {
+        padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600;
+      }
+      button.primary { border: 0; background: var(--blue); color: #fff; }
+      button.primary:disabled { background: #b9c1e8; cursor: default; }
+      button.ghost { border: 1px solid var(--line); background: #fff; color: #333; }
+      .chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 10px; border-radius: 999px; background: var(--soft);
+        color: var(--blue-ink); font-size: 12px; max-width: 220px;
+      }
+      .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: #2ec27e; }
+      .chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .hint { color: #9aa0b0; font-size: 12px; }
+      #log {
+      .rendered { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+                  max-height: 320px; overflow: auto; font-size: 13px; }
+      .rendered h1, .rendered h2, .rendered h3 { margin: 10px 0 6px; line-height: 1.3; }
+      .rendered p { margin: 6px 0; }
+      .rendered ul, .rendered ol { margin: 6px 0; padding-left: 20px; }
+      .rendered img { max-width: 100%; border-radius: 6px; margin: 6px 0; display: block; }
+      .rendered a { color: var(--blue); }
+      .rendered code { background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+      .rendered blockquote { margin: 8px 0; padding: 6px 10px; border-left: 3px solid var(--blue);
+                           background: var(--soft); border-radius: 6px; }
+      .rendered .callout-title { font-weight: 700; color: var(--blue-ink); margin-bottom: 2px; }
+      .rendered hr { border: 0; border-top: 1px solid var(--line); margin: 10px 0; }
+        white-space: pre-wrap; background: var(--soft); border-radius: 8px;
+        padding: 8px 10px; font: 12px/1.5 ui-monospace, SFMono-Regular, monospace;
+        max-height: 40vh; overflow: auto; margin-top: 10px; color: #47506b;
+      }
+      .embed-only { display: none; }
+      body.embed .embed-only { display: inline-flex; }
+      body.embed #openStandalone { display: none; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="assets/icons/icon32.png" alt="" />
+      <div class="title">DeepSeek Video Notes</div>
+      <button class="iconbtn embed-only" id="split" title="分屏显示">⇤</button>
+      <button class="iconbtn" id="openStandalone" title="在新标签页打开">⧉</button>
+      <button class="iconbtn embed-only" id="close" title="关闭">✕</button>
+    </header>
+
+    <main>
+      <div class="row">
+        <label>Obsidian 仓库</label>
+        <button class="ghost" id="pick">选择仓库</button>
+        <span class="chip"><span class="dot"></span><span id="vaultName">未选择</span></span>
+      </div>
+
+      <div class="row">
+        <label>DeepSeek Key</label>
+        <input id="apiKey" type="password" placeholder="sk-..." />
+        <button class="ghost" id="saveKey">保存</button>
+      </div>
+
+      <div class="row">
+        <label>输出语言</label>
+        <input id="language" type="text" placeholder="例如 中文 / English" />
+      </div>
+
+      <div class="row">
+        <label>笔记子目录</label>
+        <input id="folder" type="text" placeholder="留空=仓库根目录" />
+      </div>
+
+      <div class="row">
+        <label>本地 Whisper</label>
+        <input id="whisper" type="checkbox" />
+        <span class="hint">较重：需下载模型；仅无字幕时需要</span>
+      </div>
+
+      <div class="row" style="align-items:flex-start">
+        <label>生成风格</label>
+        <textarea id="stylePrompt" placeholder="例如：面向初学者、多举例子、中文、Markdown 小标题+要点" style="flex:1;min-height:52px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font:12px/1.5 inherit;resize:vertical"></textarea>
+      </div>
+
+      <div class="row">
+        <button class="primary" id="start">开始记录</button>
+        <button class="ghost" id="stop" disabled>停止并生成</button>
+      </div>
+
+      <div id="log"></div>
+
+      <section id="previewWrap" hidden style="margin-top:10px">
+        <div class="hint" style="margin-bottom:6px">生成结果（可编辑后保存）</div>
+        <textarea id="preview" style="width:100%;min-height:220px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font:12px/1.5 ui-monospace,monospace;resize:vertical"></textarea>
+        <div class="hint" style="margin:8px 0 6px">预览（实时渲染）</div>
+        <div id="rendered" class="rendered"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="primary" id="save">保存到 Obsidian</button>
+          <button class="ghost" id="discard">丢弃</button>
+        </div>
+      </section>
+    </main>
+      <details id="selfcheck" style="margin-top:10px">
+        <summary class="hint">环境自检</summary>
+        <div id="caps" class="hint" style="white-space:pre-wrap; margin-top:6px"></div>
+      </details>
+
+    <script type="module" src="panel.js"></script>
+  </body>
+</html>
